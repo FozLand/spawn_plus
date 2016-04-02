@@ -66,6 +66,7 @@ local function check_pos_range()
 				p:get_player_name(),
 				'Sorry, but you should not go beyond '..tostring(LIMIT)..'.'
 			)
+			p:set_hp( p:get_hp() - 2 )
 			go_spawn(p)
 		end
 	end
