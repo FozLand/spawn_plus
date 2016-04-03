@@ -13,6 +13,10 @@ local function go_spawn(player)
 		core.log("action", '[Spawn Plus] Moving '..name..' to '..
 			string.format("(%0.1f, %0.1f, %0.1f)", pos.x, pos.y, pos.z)
 		)
+		core.sound_play("teleport", {
+			to_player=name,
+			gain = 0.1
+		})
 		player:setpos( pos )
 	end
 end
@@ -24,10 +28,6 @@ core.register_chatcommand('spawn', {
 	},
 	func = function(name)
 		local player = core.get_player_by_name(name)
-		core.sound_play("teleport", {
-			to_player=player:get_player_name(),
-			gain = 0.1
-		})
 		go_spawn(player)
 	end
 })
@@ -66,6 +66,10 @@ local function check_pos_range()
 		local pos = p:getpos()
 		-- map limit
 		if math.abs(pos.x) > LIMIT or math.abs(pos.z) > LIMIT then
+			core.sound_play("spawnplus_sucker_punch", {
+				to_player=name,
+				gain = 0.2
+			})
 			p:set_hp( p:get_hp() - 2 )
 			core.chat_send_player(
 				name,
