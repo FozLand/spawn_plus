@@ -59,13 +59,15 @@ local function find_free(pos)
 end
 
 local INTERVAL=3
-local LIMIT=4500
+local WARN_LIMIT=4500
+local LIMIT=4528
 local function check_pos_range()
 	for _,p in ipairs(core.get_connected_players()) do
 		local name = p:get_player_name()
 		local pos = p:getpos()
 		-- map limit
-		if math.abs(pos.x) > LIMIT or math.abs(pos.z) > LIMIT then
+		local max = math.max(math.abs(pos.x),math.abs(pos.z))
+		if max > WARN_LIMIT then
 			core.sound_play("spawnplus_sucker_punch", {
 				to_player=name,
 				gain = 0.2
@@ -81,6 +83,8 @@ local function check_pos_range()
 				string.format("(%0.1f, %0.1f, %0.1f)", pos.x, pos.y, pos.z)..
 				', hp reduced to '..p:get_hp()
 			)
+		end
+		if max > LIMIT then
 			go_spawn(p)
 		end
 	end
