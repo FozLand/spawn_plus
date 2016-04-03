@@ -7,9 +7,12 @@ local function go_spawn(player)
 			if range > 0 then
 				pos.x = pos.x + math.random(-(range), range)
 				pos.z = pos.z + math.random(-(range), range)
-				core.log("action", '[Spawn Plus] Moving player to pos '..pos.x..', '..pos.y)
 			end
 		end
+		local name = player:get_player_name()
+		core.log("action", '[Spawn Plus] Moving '..name..' to '..
+			string.format("(%0.1f, %0.1f, %0.1f)", pos.x, pos.y, pos.z)
+		)
 		player:setpos( pos )
 	end
 end
@@ -59,14 +62,21 @@ local INTERVAL=3
 local LIMIT=4500
 local function check_pos_range()
 	for _,p in ipairs(core.get_connected_players()) do
+		local name = p:get_player_name()
 		local pos = p:getpos()
 		-- map limit
 		if math.abs(pos.x) > LIMIT or math.abs(pos.z) > LIMIT then
-			core.chat_send_player(
-				p:get_player_name(),
-				'Sorry, but you should not go beyond '..tostring(LIMIT)..'.'
-			)
 			p:set_hp( p:get_hp() - 2 )
+			core.chat_send_player(
+				name,
+				'Sorry, but you should not go beyond '..tostring(WARN_LIMIT)..'.'
+			)
+			minetest.log(
+				"action",
+				'[Spawn Plus] '..name..' out of bounds at '..
+				string.format("(%0.1f, %0.1f, %0.1f)", pos.x, pos.y, pos.z)..
+				', hp reduced to '..p:get_hp()
+			)
 			go_spawn(p)
 		end
 	end
