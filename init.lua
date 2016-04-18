@@ -105,7 +105,7 @@ local function check_pos_range()
 			p:set_hp( p:get_hp() - 4 )
 			core.chat_send_player(
 				name,
-				'Sorry, but you should not go beyond '..tostring(WARN_LIMIT)..'.'
+				'Do not travel beyond '..tostring(WARN_LIMIT)..'.'
 			)
 			core.log(
 				"action",
@@ -115,10 +115,32 @@ local function check_pos_range()
 			)
 		end
 		if max > LIMIT then
+			p:set_detach()
 			go_spawn(p)
+			core.chat_send_player(
+				name,
+				'You won a free ticket to spawn!'
+			)
+			core.after(0.1, function()
+				-- kick players who won't move
+				pos = p:getpos()
+				max = math.max(math.abs(pos.x),math.abs(pos.z))
+				if max > LIMIT then
+					local msg = "You are too far from spawn."
+					core.kick_player(name, msg)
+				end
+			end)
 		end
 	end
 	core.after(INTERVAL, check_pos_range)
 end
 
 core.after(INTERVAL, check_pos_range)
+
+core.register_on_joinplayer(function (player)
+		local pos = player:getpos()
+		local max = math.max(math.abs(pos.x),math.abs(pos.z))
+		if max > LIMIT then
+			go_spawn(player)
+		end
+end)
