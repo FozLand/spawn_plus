@@ -48,6 +48,36 @@ core.register_chatcommand('arena', {
 	end
 })
 
+core.register_chatcommand('hall', {
+	description = "Teleports you to City Hall",
+	privs = {
+		shout = true,
+	},
+	func = function(name)
+		local player = core.get_player_by_name(name)
+		core.sound_play( "teleport", {
+			to_player=player:get_player_name(),
+			gain = 0.1
+		})
+		player:setpos( { x=135, y=7, z=40 } )
+	end
+})
+
+core.register_chatcommand('post', {
+	description = "Teleports you to the Post Office",
+	privs = {
+		shout = true,
+	},
+	func = function(name)
+		local player = core.get_player_by_name(name)
+		core.sound_play( "teleport", {
+			to_player=player:get_player_name(),
+			gain = 0.1
+		})
+		player:setpos( { x=676, y=4, z=523 } )
+	end
+})
+
 local function find_free(pos)
 	for _, d in ipairs(tries) do
 		local p = {x = pos.x+d.x, y = pos.y+d.y, z = pos.z+d.z}
