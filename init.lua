@@ -102,7 +102,7 @@ local function check_pos_range()
 				to_player=name,
 				gain = 0.2
 			})
-			p:set_hp( p:get_hp() - 2 )
+			p:set_hp( p:get_hp() - 4 )
 			core.chat_send_player(
 				name,
 				'Sorry, but you should not go beyond '..tostring(WARN_LIMIT)..'.'
