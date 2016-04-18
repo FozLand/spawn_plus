@@ -107,7 +107,7 @@ local function check_pos_range()
 				name,
 				'Sorry, but you should not go beyond '..tostring(WARN_LIMIT)..'.'
 			)
-			minetest.log(
+			core.log(
 				"action",
 				'[Spawn Plus] '..name..' out of bounds at '..
 				string.format("(%0.1f, %0.1f, %0.1f)", pos.x, pos.y, pos.z)..
