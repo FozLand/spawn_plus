@@ -78,6 +78,21 @@ core.register_chatcommand('post', {
 	end
 })
 
+core.register_chatcommand('town', {
+	description = "Teleports you to the town.",
+	privs = {
+		shout = true,
+	},
+	func = function(name)
+		local player = core.get_player_by_name(name)
+		core.sound_play( "teleport", {
+			to_player=player:get_player_name(),
+			gain = 0.1
+		})
+		player:setpos( { x=620, y=3, z=-2906 } )
+	end
+})
+
 local function find_free(pos)
 	for _, d in ipairs(tries) do
 		local p = {x = pos.x+d.x, y = pos.y+d.y, z = pos.z+d.z}
