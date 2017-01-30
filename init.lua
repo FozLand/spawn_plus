@@ -138,6 +138,7 @@ local WARN_LIMIT=4500
 local LIMIT=4528
 local function check_pos_range()
 	for _,p in ipairs(core.get_connected_players()) do
+		if minetest.check_player_privs(p, "server") then return end
 		local name = p:get_player_name()
 		local pos = p:getpos()
 		-- map limit
