@@ -123,59 +123,37 @@ core.register_chatcommand('hub', {
 	end
 })
 
-local function find_free(pos)
-	for _, d in ipairs(tries) do
-		local p = {x = pos.x+d.x, y = pos.y+d.y, z = pos.z+d.z}
-		local n = core.get_node(p)
-		if not core.registered_nodes[n.name].walkable then
-			return p, true
-		end
-	end
-end
-
 local INTERVAL=3
 local WARN_LIMIT=4500
 local LIMIT=4528
 local function check_pos_range()
-	for _,p in ipairs(core.get_connected_players()) do
-		if minetest.check_player_privs(p, "server") then return end
-		local name = p:get_player_name()
-		local pos = p:getpos()
-		-- map limit
-		local max = math.max(math.abs(pos.x),math.abs(pos.z))
-		if max > WARN_LIMIT then
-			core.sound_play("spawnplus_sucker_punch", {
-				to_player=name,
-				gain = 0.2
-			})
-			p:set_hp( p:get_hp() - 4 )
-			core.chat_send_player(
-				name,
-				'Do not travel beyond '..tostring(WARN_LIMIT)..'.'
-			)
-			core.log(
-				"action",
-				'[Spawn Plus] '..name..' out of bounds at '..
-				string.format("(%0.1f, %0.1f, %0.1f)", pos.x, pos.y, pos.z)..
-				', hp reduced to '..p:get_hp()
-			)
-		end
-		if max > LIMIT then
-			p:set_detach()
-			go_spawn(p)
-			core.chat_send_player(
-				name,
-				'You won a free ticket to spawn!'
-			)
-			core.after(0.1, function()
-				-- kick players who won't move
-				pos = p:getpos()
-				max = math.max(math.abs(pos.x),math.abs(pos.z))
-				if max > LIMIT then
-					local msg = "You are too far from spawn."
-					core.kick_player(name, msg)
-				end
-			end)
+	local players = core.get_connected_players()
+	for _,p in ipairs(players) do
+		if p:is_player() and not core.check_player_privs(p, 'server') then
+			local pos = p:getpos()
+			local max = math.max(math.abs(pos.x), math.abs(pos.z))
+			if max > LIMIT then
+				p:set_detach()
+				go_spawn(p)
+				local name = p:get_player_name()
+				core.chat_send_player(name, 'You won a free ticket to spawn!')
+				core.after(1, function() -- kick players who won't move
+					if p:is_player() then
+						pos = p:getpos()
+						max = math.max(math.abs(pos.x), math.abs(pos.z))
+						if max > LIMIT then
+							core.kick_player(name, "You are too far from spawn.")
+						end
+					end
+				end)
+			elseif max > WARN_LIMIT then
+				local name = p:get_player_name()
+				core.sound_play('spawnplus_sucker_punch', {to_player=name, gain = 0.2})
+				p:set_hp( p:get_hp() - 4 )
+				core.chat_send_player(name, 'Do not travel beyond '..WARN_LIMIT..'.')
+				core.log("action", '[Spawn Plus] '..name..' out of bounds at '..
+					core.pos_to_string(pos)..', hp reduced to '..p:get_hp())
+			end
 		end
 	end
 	core.after(INTERVAL, check_pos_range)
