@@ -123,6 +123,36 @@ core.register_chatcommand('hub', {
 	end
 })
 
+core.register_chatcommand('mine', {
+	description = "Teleports you to the pubic mine.",
+	privs = {
+		shout = true,
+	},
+	func = function(name)
+		local player = core.get_player_by_name(name)
+		core.sound_play( "teleport", {
+			to_player=player:get_player_name(),
+			gain = 0.1
+		})
+		player:setpos( { x=33, y=-72, z=235 } )
+	end
+})
+
+core.register_chatcommand('mall', {
+	description = "Teleports you to the mall.",
+	privs = {
+		shout = true,
+	},
+	func = function(name)
+		local player = core.get_player_by_name(name)
+		core.sound_play( "teleport", {
+			to_player=player:get_player_name(),
+			gain = 0.1
+		})
+		player:setpos( { x=667, y=6, z=-377 } )
+	end
+})
+
 local INTERVAL=3
 local WARN_LIMIT=4500
 local LIMIT=4528
